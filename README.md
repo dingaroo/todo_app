@@ -250,7 +250,13 @@ You are telling the receptionist that as long as she sees the request "/todo_lis
 
 At this point, the receptionist job is done.
 
-Now try running the test again. You will still fail for a different reason. The error is:
+Now try running the test again.
+
+```
+bundle exec rspec spec/features/todo_lists_spec.rb
+```
+
+You will still fail for a different reason. The error is:
 
 ```
 1) TodoLists view all todo lists should render the page successfully
@@ -259,3 +265,31 @@ Now try running the test again. You will still fail for a different reason. The 
     ActionController::RoutingError:
       uninitialized constant TodoListsController
 ```
+
+Rails is telling you: "hey, you want me to direct the request to 'todo_lists' department, but there is no 'todo_lists' department! Are you kidding me?"
+
+In a more technical term, you have not create the controller (department) yet. That's why Rails do not know what to do.
+
+To create the department, run this command in terminal/bash:
+
+```
+rails generate controller todo_lists
+```
+
+Now your department is created. Notice that there is a new file under `app/controllers` named `todo_lists_controller.rb`. This is your department. With the department created, now run the test again:
+
+```
+bundle exec rspec spec/features/todo_lists_spec.rb
+```
+
+Your test will still fail, yet because of a different reason:
+
+```
+1) TodoLists view all todo lists should render the page successfully
+   Failure/Error: visit "/todo_lists"
+
+   AbstractController::ActionNotFound:
+     The action 'index' could not be found for TodoListsController
+```
+
+Now you have a "todo_lists" department. But you don't have "index"! Where is the person the visitor is suppose to look for?
