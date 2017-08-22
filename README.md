@@ -349,6 +349,7 @@ Now you have an empty page. Then you tell your "index" action to render that pag
 class TodoListsController < ApplicationController
 
   def index
+    render 'index'
   end
 
 end
@@ -385,3 +386,56 @@ bundle exec rspec spec/features/todo_lists_spec.rb
 ```
 
 The test should still pass.
+
+Now, the page has nothing. It is pretty boring. Let's add a test saying that there visitor should expect to see the content "Your Todo Lists".
+
+```ruby
+require 'rails_helper'
+
+RSpec.feature "TodoLists", type: :feature do
+
+  feature "view all todo lists" do
+
+    it "should render the page successfully" do
+      visit "/todo_lists"
+      expect(page).to have_http_status(:success)
+      expect(page).to have_text("Your Todo Lists")
+    end
+
+  end
+
+end
+```
+
+Run the test.
+
+```
+bundle exec rspec spec/features/todo_lists_spec.rb
+```
+
+The test should fail now.
+
+```
+1) TodoLists view all todo lists should render the page successfully
+     Failure/Error: expect(page).to have_text("Your Todo Lists")
+       expected to find text "Your Todo Lists" in ""
+     # ./spec/features/todo_lists_spec.rb:10:in `block (3 levels) in <top (required)>'
+
+```
+
+Go to `app/views/todo_lists/index.html.erb`, and enter the following:
+
+*app/views/todo_lists/index.html.erb*
+```html
+<h2>Your Todo Lists</h2>
+```
+
+Run the test again, and now it passes.
+
+```
+bundle exec rspec spec/features/todo_lists_spec.rb
+```
+
+Right now, this page looks something like this:
+
+Still pretty boring.
