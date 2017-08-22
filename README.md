@@ -124,13 +124,13 @@ Then you see a form for you to fill in the title and the description. Notice tha
 
 Let's fill in some dummy names, then click on "Create Odot".
 
-![Odot Created](docs/img/3_Odot_Created?raw=true "Odot Created")
+![Odot Created](docs/img/3_Odot_Created.png?raw=true "Odot Created")
 
 With the Odot created, you will see the Odot that you have just created.
 
 Click on "back", and you will go back the first page `\odots`.
 
-![Odot Index Page](docs/img/4_Odot_index.png?raw=true "Odot Index")
+![Odot Index Page](docs/img/4_Odot_Index.png?raw=true "Odot Index")
 
 Over here, you will see a list of Odots that you have created. Let's create 2 more.
 
