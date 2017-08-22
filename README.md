@@ -114,16 +114,38 @@ rails server -b $IP -p $PORT
 
 You will see a very simple page with a link to create new Odot.
 
+![Odot Index Page](docs/img/1_Odot_index.png?raw=true "Odot Index")
+
 Click on that link.
 
 Then you see a form for you to fill in the title and the description. Notice that this is the fields that we have set when we generate scaffold.
 
+![New Odot Page](docs/img/2_New_Odot.png?raw=true "New Odot Page")
+
 Let's fill in some dummy names, then click on "Create Odot".
 
-With the Odot created, you will see the Odot that you have just created. Click on "back", and you will go back the first page `\odots`. Over here, you will see a list of Odots that you have created. Let's create 2 more.
+![Odot Created](docs/img/3_Odot_Created?raw=true "Odot Created")
+
+With the Odot created, you will see the Odot that you have just created.
+
+Click on "back", and you will go back the first page `\odots`.
+
+![Odot Index Page](docs/img/4_Odot_index.png?raw=true "Odot Index")
+
+Over here, you will see a list of Odots that you have created. Let's create 2 more.
+
+![Odot Index with Many Items](docs/img/5_Odot_Index_with_many_items.png?raw=true "Odot Index with Many Items")
 
 Notice that you can edit the title or description by clicking "Edit" link.
 
+![Editing Odot](docs/img/6_Editing_Odot.png?raw=true "Editing Odot")
+
+Now you will see the `\odots` with updated title and description:
+
+![Odot Index with Edited Items](docs/img/7_Odot_index_with_edited_item.png?raw=true "Odot Index with Edited Items")
+
 You can also delete the todo list by clicking "Destroy".
+
+![Odot Destroyed](docs/img/8_Odot_destroyed.png?raw=true "Odot Destroyed")
 
 Basically that's it. Right now you have a functioning application (although it is quite ugly). Not too bad with just a single line of command, right?
