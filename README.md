@@ -296,6 +296,7 @@ Now you have a "todo_lists" department. But you don't have "index"! Where is the
 
 So now you should add the action in your `todo_lists_controller.rb` like this:
 
+*app/controllers/todo_lists_controller.rb*
 ```ruby
 class TodoListsController < ApplicationController
 
@@ -306,3 +307,81 @@ end
 ```
 
 To add an action, you define a method with the action name as the method name. Don't forget to end the method.
+
+Now try running the test again:
+
+```
+bundle exec rspec spec/features/todo_lists_spec.rb
+```
+
+The test is still failing, of course with a different reason:
+
+```
+1) TodoLists view all todo lists should render the page successfully
+     Failure/Error: visit "/todo_lists"
+
+     ActionController::UnknownFormat:
+       TodoListsController#index is missing a template for this request format and variant.
+
+       request.formats: ["text/html"]
+       request.variant: []
+
+       NOTE! For XHR/Ajax or API requests, this action would normally respond with 204 No Content: an empty white screen. Since you're loading it in a web browser, we assume that you expected to actually render a template, not nothing, so we're showing an error to be extra-clear. If you expect 204 No Content, carry on. That's what you'll get from an XHR or API request. Give it a shot.
+
+```
+
+Pay attention to this line: `TodoListsController#index is missing a template for this request format and variant.`. Rails is telling you there is no template. You asked to visit a page right. But where is that page? It is missing.
+
+So now you got to add the page, and tell your "index" controller to render that page.
+
+By default `todo_lists` controller will look for a file under the `views/todo_lists` folder.
+
+To add the page, you can create a file call `index.html.erb` under the folder `views/todo_lists` manually, or run the following command in terminal/bash:
+
+```
+touch app/views/todo_lists/index.html.erb
+```
+
+Now you have an empty page. Then you tell your "index" action to render that page.
+
+*app/controllers/todo_lists_controller.rb*
+```ruby
+class TodoListsController < ApplicationController
+
+  def index
+  end
+
+end
+```
+
+Now try running the test again:
+
+```
+bundle exec rspec spec/features/todo_lists_spec.rb
+```
+
+And the test finally passed! It is not too difficult right?
+
+One more thing:
+
+Rails automatically render the page with the same name as the controller action. This means that if your controller action is "index", it will render "index.html.erb". If the controller action is "show", it will automatically render "show.html.erb".
+
+Therefore, there isn't really a need to call `render "index"` in the `index` controller action. Remove it
+
+*app/controllers/todo_lists_controller.rb*
+```ruby
+class TodoListsController < ApplicationController
+
+  def index
+  end
+
+end
+```
+
+and then run the specs again.
+
+```
+bundle exec rspec spec/features/todo_lists_spec.rb
+```
+
+The test should still pass.
