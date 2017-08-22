@@ -293,3 +293,16 @@ Your test will still fail, yet because of a different reason:
 ```
 
 Now you have a "todo_lists" department. But you don't have "index"! Where is the person the visitor is suppose to look for?
+
+So now you should add the action in your `todo_lists_controller.rb` like this:
+
+```ruby
+class TodoListsController < ApplicationController
+
+  def index
+  end
+
+end
+```
+
+To add an action, you define a method with the action name as the method name. Don't forget to end the method.
