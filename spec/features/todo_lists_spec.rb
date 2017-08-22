@@ -8,6 +8,7 @@ RSpec.feature "TodoLists", type: :feature do
       visit "/todo_lists"
       expect(page).to have_http_status(:success)
       expect(page).to have_text("Your Todo Lists")
+      expect(page).to have_text("First Todo List")
     end
 
   end

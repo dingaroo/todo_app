@@ -438,4 +438,29 @@ bundle exec rspec spec/features/todo_lists_spec.rb
 
 Right now, this page looks something like this:
 
-Still pretty boring.
+Still pretty boring. Up until now, you are only generate static web pages. What about the actual todo list?
+
+Now is the time to do it.
+
+Add another line of code in your test file (for now):
+
+```ruby
+require 'rails_helper'
+
+RSpec.feature "TodoLists", type: :feature do
+
+  feature "view all todo lists" do
+
+    it "should render the page successfully" do
+      visit "/todo_lists"
+      expect(page).to have_http_status(:success)
+      expect(page).to have_text("Your Todo Lists")
+      expect(page).to have_text("First Todo List")
+    end
+
+  end
+
+end
+```
+
+This line of code is to test that the first todo list is in this page. Running this spec file will result in failing test.
