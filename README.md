@@ -149,3 +149,113 @@ You can also delete the todo list by clicking "Destroy".
 ![Odot Destroyed](docs/img/8_Odot_destroyed.png?raw=true "Odot Destroyed")
 
 Basically that's it. Right now you have a functioning application (although it is quite ugly). Not too bad with just a single line of command, right?
+
+### Step 3: Create Todo List without using Scaffold
+
+Scaffold is great. But it has too much "magic" involved. There are also situations where you do not need to generate scaffold. As with most other learning programs, it is better for you to plan your application, then generate the model/controller respectively.
+
+#### User stories
+
+One way to plan web application is to do use "user stories". User stories are features your web application should do from the user perspectives. For the purpose of this application, I came out with the following user stories for Todo List:
+
+1. As a user, I should be able to view all my todo lists.
+2. As a user, I should be able to create todo list.
+3. As a user, I should be able to archive my todo list.
+4. As a user, I should be able to delete my todo list.
+5. As a user, I should be able to edit the title and description of the todo list.
+6. As a user, I should be able to view only my non-archive todo list.
+
+Notice that user stories is in the form of "As a user, I should be able to ...". This make sure that the perspective is always from the user.
+
+#### View all Todo Lists
+
+Let's try coding the first feature. In this learning group, we are adopting the practice of test-driven development. This means that we write the test first, then we attempt to make the test pass.
+
+You already have installed rspec from Step 1. So the first thing to do is generate a feature spec:
+
+```
+rails generate rspec:feature todo_lists
+```
+
+A file is created under `spec/features/` with the name `todo_lists_spec.rb`. Go to this file, and type the below code:
+
+*spec/features/todo_lists_spec.rb*
+```ruby
+require 'rails_helper'
+
+RSpec.feature "TodoLists", type: :feature do
+
+  feature "view all todo lists" do
+
+    it "should render the page successfully" do
+      visit "/todo_lists"
+      expect(page).to have_http_status(:success)
+    end
+
+  end
+
+end
+```
+
+Can you guess what is this file about? It is a spec (or a test) that you have written based on a user story "I should be able to view all my todo list".
+
+So imagine you are the user, you try to visit "/todo_lists" path, and you expect that the page to render successfully. For grouping purpose, I categorize this under the feature "view all todo lists", and the description of this spec is "should render the page successfully".
+
+Now try running the spec:
+
+```
+bundle exec rspec spec/features/todo_lists_spec.rb
+```
+
+The test will fail. This is because of an error:
+
+```
+1) TodoLists view all todo lists should render the page successfully
+     Failure/Error: visit "/todo_lists"
+
+     ActionController::RoutingError:
+       No route matches [GET] "/todo_lists"
+```
+
+Pay special attention to this sentence:
+
+```
+ActionController::RoutingError:
+  No route matches [GET] "/todo_lists"
+```
+
+The test fail because there is no route that matches "/todo_lists".
+
+Imagine every request is a visitor to your office. You are the boss of the company. The first thing the visitor see is your receptionist. Right now, this visitor is asking for "/todo_list". Your receptionist need to know what to do when any visitor ask for "/todo_list".
+
+In this case, your receptionist is your route. You can tell your route (or receptionist) what to do in the `config/routes.rb` file. Insert the following line into your `routes.rb` file. It should be insert before the `end` keyword.
+
+*config/routes.rb*
+```ruby
+get "/todo_lists", to: "todo_lists#index"
+```
+
+Your file should look something like this now:
+```ruby
+Rails.application.routes.draw do
+  resources :odots
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  get "/todo_lists", to: "todo_lists#index"
+end
+```
+
+This line `get "/todo_lists", to: "todo_lists#index"` tells your routes that whenever it gets a request to "/todo_lists", direct them to the controller named "todo_lists" with the "index" action. You can think of the controller "todo_lists" as a department, and the action "index" as a person in the department.
+
+You are telling the receptionist that as long as she sees the request "/todo_lists", direct them to "index" person in the "todo_lists" department.
+
+At this point, the receptionist job is done.
+
+Now try running the test again. You will still fail for a different reason. The error is:
+
+```
+1) TodoLists view all todo lists should render the page successfully
+    Failure/Error: visit "/todo_lists"
+
+    ActionController::RoutingError:
+      uninitialized constant TodoListsController
+```
