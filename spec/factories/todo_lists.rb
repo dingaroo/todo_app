@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :todo_list do
-    title "MyString"
-    description "MyText"
+    title "Sample todo list"
+    description "This is a sample todo list"
     archive false
   end
 end

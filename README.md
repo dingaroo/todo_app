@@ -439,6 +439,8 @@ bundle exec rspec spec/features/todo_lists_spec.rb
 
 Right now, this page looks something like this:
 
+![Empty Todo List](docs/img/9_Blank_todo_list.png?raw=true "Blank Todo List")
+
 Still pretty boring. Up until now, you are only generate static web pages. What about the actual todo list?
 
 Now is the time to do it.
@@ -580,4 +582,181 @@ rails db:migrate
 rails db:migrate RAILS_ENV=test
 ```
 
-You will see that the table is now created.
+The table is now created in the database.
+
+The next step is to define the factory file. Change the code to the following:
+
+*spec/factories/todo_lists.rb*
+```ruby
+FactoryGirl.define do
+  factory :todo_list do
+    title "Sample todo list"
+    description "This is a sample todo list"
+    archive false
+  end
+end
+```
+
+You define a default record to create. In this case, the title will be "Sample todo list" and the description will be "This is a sample todo list". Running `FactoryGirl.create(:todo_list)` will create a record with these information in the test database.
+
+With the Factory file created, you can try running the test again:
+
+```
+bundle exec rspec spec/features/todo_lists_spec.rb
+```
+
+The test will fail. Because it cannot find the text "Sample todo list" in the `app/views/todo_lists/index.html.erb`.
+
+```
+Failures:
+
+  1) TodoLists view all todo lists should render the page successfully
+     Failure/Error: expect(page).to have_text(@todo_list.title)
+       expected to find text "Sample todo list" in "Your Todo Lists"
+     # ./spec/features/todo_lists_spec.rb:15:in `block (3 levels) in <top (required)>'
+```
+
+In a strict test-driven development, you write the simplest code to let the code pass. In this case, you should be tempted to just write the text "Sample todo list" to pass the test. It's all alright, let's do that:
+
+*app/views/todo_lists/index.html.erb*
+```html
+<h2>Your Todo Lists</h2>
+<p>
+  Sample todo list
+</p>
+```
+
+Running the test again, now your test passed.
+
+But you know this is not right. But how come your test passed? This is because your test is not written correctly. Let's change your test:
+
+*spec/features/todo_lists_spec.rb*
+```ruby
+require 'rails_helper'
+
+RSpec.feature "TodoLists", type: :feature do
+
+  feature "view all todo lists" do
+
+    before :each do
+      @todo_list_1 = FactoryGirl.create(:todo_list, title: "Personal learning", description: "List of things I have to do for personal learning")
+      @todo_list_2 = FactoryGirl.create(:todo_list, title: "Work", description: "Work list items")
+      @todo_list_3 = FactoryGirl.create(:todo_list, title: "Home", description: "List of home items to do")
+    end
+
+    it "should render the page successfully with all the todo list items" do
+      visit "/todo_lists"
+      expect(page).to have_http_status(:success)
+      expect(page).to have_text("Your Todo Lists")
+      todo_lists = TodoList.all
+      todo_lists.each do |todo_list|
+        expect(page).to have_text(todo_list.title)
+      end
+    end
+
+  end
+
+end
+```
+
+In this updated test, I changed 3 things:
+* First, I create 3 todo lists with the title "Personal Learning", "Work", and "Home"
+* Second, call for all the todo lists created using `TodoList.all` and save it in the variable `todo_lists`. Then I loop through `todo_lists` and expect that the page should have each of the title.
+* Third, I change the specs description to reflect the nature of this specs.
+
+Running the test again:
+
+```
+bundle exec rspec spec/features/todo_lists_spec.rb
+```
+
+It will result in a failure:
+
+```
+1) TodoLists view all todo lists should render the page successfully
+   Failure/Error: expect(page).to have_text(todo_list.title)
+     expected to find text "Personal learning" in "Your Todo Lists Sample todo list"
+   # ./spec/features/todo_lists_spec.rb:19:in `block (4 levels) in <top (required)>'
+   # ./spec/features/todo_lists_spec.rb:18:in `block (3 levels) in <top (required)>'
+```
+
+In this case, I have to make the page show all the todo list items.
+
+To fix this, we will have to do 2 things:
+1. Extract all the TodoList items in database, and save it as an instance variable in the `index` action of the controller.
+2. Loop through this instance variable in the `index.html.erb` and display it as a text.
+
+To extract all the TodoList items in the controller, write the following code:
+
+*app/controllers/todo_lists_controller.rb*
+```ruby
+class TodoListsController < ApplicationController
+
+  def index
+    @todo_lists = TodoList.all
+  end
+
+end
+```
+
+With the instance variable `@todolists` declared, now the view `index.html.erb` will have access to this instance variable.
+
+*app/views/todo_lists/index.html.erb*
+```html
+<h2>Your Todo Lists</h2>
+
+<% @todo_lists.each do |todo_list| %>
+  <p><%= todo_list.title %></p>
+<% end %>
+```
+
+You can enter ruby code within the `<%` and `%>`.
+
+This line:
+
+```
+<% @todo_lists.each do |todo_list| %>
+```
+
+Loop through the instance variable `@todo_lists` and save each element in the variable `todo_list`.
+
+```
+<p><%= todo_list.title %></p>
+```
+
+Then we return the title of `todo_list` in each loop in html with `<%=` and `%>`.
+
+Let's run the test again:
+
+```
+bundle exec rspec spec/features/todo_lists_spec.rb
+```
+
+The test is now passed.
+
+##### Generating Dummy Data
+
+Now you do not see anything in your screen except for the title because there is no data in the development database. You can generate dummy data with 2 ways:
+* Go to Rails console and create the data
+* Using Rails db:seed
+
+In this section, I will illustrate using Rails db:seed. Enter the following code:
+
+*db/seeds.rb*
+```ruby
+TodoList.create(title: "Personal Learning", description: "List of things I have to do for personal learning")
+TodoList.create(title: "Work", description: "Work list items")
+TodoList.create(title: "Home", description: "List of home items to do")
+```
+
+Then run the below command to generate the dummy records:
+
+```
+rails db:seed
+```
+
+Go back to your index page again, now you will see the title of the todo list in it.
+
+With that, we have finally completed the first user story: **As a user, I should be able to view all my todo lists.**
+
+![Populated Todo List](docs/img/10_Populated_todo_list.png?raw=true "Populated Todo List")
