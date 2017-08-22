@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @odot.title %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @odot.description %>
+</p>
+
+<%= link_to 'Edit', edit_odot_path(@odot) %> |
+<%= link_to 'Back', odots_path %>

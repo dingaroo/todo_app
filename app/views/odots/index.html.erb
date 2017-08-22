@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Odots</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Description</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @odots.each do |odot| %>
+      <tr>
+        <td><%= odot.title %></td>
+        <td><%= odot.description %></td>
+        <td><%= link_to 'Show', odot %></td>
+        <td><%= link_to 'Edit', edit_odot_path(odot) %></td>
+        <td><%= link_to 'Destroy', odot, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Odot', new_odot_path %>

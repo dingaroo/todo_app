@@ -45,3 +45,85 @@ bundle exec rspec
 ```
 
 You should see `0 examples, 0 failures` in your terminal/bash.
+
+### Step 2: Generate Rails Scaffold (Optional)
+
+This step is optional. The idea is to show you what Rails actually help you to do by default. As this is more of a demonstration and not the actual coding of the application, we will not use the actual naming convention.
+
+Generating scaffold is the fastest way to develop an application. A scaffold includes a controller (with the default 7 controller actions), model, and views.
+
+This is a Todo list application. So the user will have to create a todo list, i.e. a list of things that the user want to do.
+
+So let's assume that each todo list will need to have 2 fields:
+* title: The title of the todo list (`string`)
+* description: Description of the todo list (`text`)
+
+Once you have decide on what field you want your Todo list to have, you can generate the scaffold with the following command:
+
+```
+rails generate scaffold Odot title:string description:text
+```
+
+I use Odot for the name of the todo list. It is the inverse of todo.
+
+Migrate your database:
+
+```
+rails db:migrate
+```
+
+Migration means creating the table and the necessary columns in the database. The tables and the columns are also known as the schema.
+
+Notice that once you run the command, you will see Rails create a list of files. They can serve as a good reference when we are building the actual todo list.
+
+Looking at `config/routes.rb` file, you notice that there is an additional line added:
+
+```ruby
+resources :odots
+```
+
+This line added 7 default routes for the resource Odots. Try running `rails routes` in your bash/terminal, you will see the following:
+
+```
+Prefix Verb   URI Pattern               Controller#Action
+    odots GET    /odots(.:format)          odots#index
+          POST   /odots(.:format)          odots#create
+ new_odot GET    /odots/new(.:format)      odots#new
+edit_odot GET    /odots/:id/edit(.:format) odots#edit
+     odot GET    /odots/:id(.:format)      odots#show
+          PATCH  /odots/:id(.:format)      odots#update
+          PUT    /odots/:id(.:format)      odots#update
+          DELETE /odots/:id(.:format)      odots#destroy
+```
+
+For now, concentrate on the *URI Pattern* column. For example, if you see `/odots`, this means that the path is `<your root_url>/odots`. For example, if your home page is https://www.example.com, to access the `/odots`, means you have to go to https://www.example.com/odots.
+
+In the third column *Controller#Action* tells you which controller and which action the path maps into. Let's just look at `/odots` first.
+
+Start your rails server:
+
+```
+rails server
+```
+
+If you are using cloud9, use the following command instead:
+
+```
+rails server -b $IP -p $PORT
+```
+
+You will see a very simple page with a link to create new Odot.
+
+Click on that link.
+
+Then you see a form for you to fill in the title and the description. Notice that this is the fields that we have set when we generate scaffold.
+
+Let's fill in some dummy names, then click on "Create Odot".
+
+With the Odot created, you will see the Odot that you have just created. Click on "back", and you will go back the first page `\odots`. Over here, you will see a list of Odots that you have created. Let's create 2 more.
+
+Notice that you can edit the title or description by clicking "Edit" link.
+
+You can also delete the todo list by clicking "Destroy".
+
+Basically that's it. Right now you have a functioning application (although it is quite ugly). Not too bad with just a single line of command, right?

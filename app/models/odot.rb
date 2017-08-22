@@ -1,0 +1,2 @@
+class Odot < ApplicationRecord
+end
