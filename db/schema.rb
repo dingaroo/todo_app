@@ -10,13 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170822025520) do
+ActiveRecord::Schema.define(version: 20170822072148) do
 
   create_table "odots", force: :cascade do |t|
     t.string   "title"
     t.text     "description"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+  end
+
+  create_table "todo_lists", force: :cascade do |t|
+    t.string   "title",                       null: false
+    t.text     "description"
+    t.boolean  "archive",     default: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
 end

@@ -389,6 +389,7 @@ The test should still pass.
 
 Now, the page has nothing. It is pretty boring. Let's add a test saying that there visitor should expect to see the content "Your Todo Lists".
 
+*spec/features/todo_lists_spec.rb*
 ```ruby
 require 'rails_helper'
 
@@ -442,8 +443,9 @@ Still pretty boring. Up until now, you are only generate static web pages. What 
 
 Now is the time to do it.
 
-Add another line of code in your test file (for now):
+In your specs file, amend the code to the below:
 
+*spec/features/todo_lists_spec.rb*
 ```ruby
 require 'rails_helper'
 
@@ -451,11 +453,15 @@ RSpec.feature "TodoLists", type: :feature do
 
   feature "view all todo lists" do
 
+    before :each do
+      @todo_list = FactoryGirl.create(:todo_list)
+    end
+
     it "should render the page successfully" do
       visit "/todo_lists"
       expect(page).to have_http_status(:success)
       expect(page).to have_text("Your Todo Lists")
-      expect(page).to have_text("First Todo List")
+      expect(page).to have_text(@todo_list.title)
     end
 
   end
@@ -463,4 +469,115 @@ RSpec.feature "TodoLists", type: :feature do
 end
 ```
 
-This line of code is to test that the first todo list is in this page. Running this spec file will result in failing test.
+This line of code is to test that the first todo list is in this page. Running this spec file will result in failing test. The error message is:
+
+```
+Failures:
+
+  1) TodoLists view all todo lists should render the page successfully
+     Failure/Error: @todo_list = FactoryGirl.create(:todo_list)
+
+     ArgumentError:
+       Factory not registered: todo_list
+
+```
+The error is that there is no Factory registered for `todo_list`. A factory (from `factory_girls_rails` gem) is like a factory that creates records in the test database. A factory file will be created when you create the model.
+
+If follow Step 2, you should have seen the `spec/factories/odots.rb` file. You will define a blueprint of your record in that file. Then call the `FactoryGirl.create` method to create the record in the test database.
+
+While we can manually create the factory file in order to pass the test, but we are not going to do that. This is because we are going to generate the `todo_list` model soon, and a factory file will be automatically generated.
+
+##### Going back to the drawing board
+
+Now that we need to create the model before we can move on, let's take a step back and understand what kind of data we will include in todo_list table. Recall that the user stories are:
+
+1. As a user, I should be able to view all my todo lists.
+2. As a user, I should be able to create todo list.
+3. As a user, I should be able to archive my todo list.
+4. As a user, I should be able to delete my todo list.
+5. As a user, I should be able to edit the title and description of the todo list.
+6. As a user, I should be able to view only my non-archive todo list.
+
+This means that at minimal, there should be a title and description field, similar to Odot. As the user is able to archive the todo_list, I also need another field archive, which is a boolean.
+
+When defining the table structure, you also need to consider for each of the field:
+* Whether can there be an empty value or it must be present.
+* What's the default value if there is nothing entered.
+* The format for decimal places if the field contains decimals.
+* Whether should you index this field (more on this in future).
+
+So the table structure for todo_list will be:
+* title: Title of the todo list (`string`). It must be present.
+* description: Description of the todo list (`text`)
+* archive: Whether is the todo list archive (`boolean`). The default is `false`
+
+So run the following command to generate the model:
+
+```
+rails generate model Todo_list title:string description:text archive:boolean
+```
+
+Running this command generate the following file:
+
+```
+Running via Spring preloader in process 7306
+      invoke  active_record
+      create    db/migrate/20170822072148_create_todo_lists.rb
+      create    app/models/todo_list.rb
+      invoke    rspec
+      create      spec/models/todo_list_spec.rb
+      invoke      factory_girl
+      create        spec/factories/todo_lists.rb
+```
+
+The first file is the migration file. Let's take a look at it. Note that the numbers are timestamped. You will see a different number when attempting this tutorial:
+
+*db/migrate/20170822072148_create_todo_lists.rb*
+```ruby
+class CreateTodoLists < ActiveRecord::Migration[5.0]
+  def change
+    create_table :todo_lists do |t|
+      t.string :title
+      t.text :description
+      t.boolean :archive
+
+      t.timestamps
+    end
+  end
+end
+```
+
+In this migration file, you are telling Rails to create a table in the database call "todo_lists", with the column "title", "description", and "archive", and its respective data types.
+
+By default, Rails will also include a timestamps to record the time when an entry to the table is created or updated via `t.timestamps`.
+
+Go back to our data structure again:
+* title: Title of the todo list (`string`). It must be present.
+* description: Description of the todo list (`text`)
+* archive: Whether is the todo list archive (`boolean`). The default is `false`
+
+You can define this within your migration file. Change your migration file to the following:
+
+*db/migrate/20170822072148_create_todo_lists.rb*
+```ruby
+class CreateTodoLists < ActiveRecord::Migration[5.0]
+  def change
+    create_table :todo_lists do |t|
+      t.string :title, null: false
+      t.text :description
+      t.boolean :archive, default: false
+
+      t.timestamps
+    end
+  end
+end
+```
+
+Then migrate the database:
+
+```
+rails db:migrate
+rails db:migrate RAILS_ENV=test
+```
+
+You will see that the table is now created.
