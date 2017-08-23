@@ -22,4 +22,20 @@ RSpec.feature "TodoLists", type: :feature do
 
   end
 
+  feature "create a todo list" do
+
+    it "should create one todo list" do
+      visit "/todo_lists/new"
+      expect(page).to have_http_status(:success)
+      expect(page).to have_text("Create New Todo List")
+      fill_in "Title", with: "School Work"
+      fill_in "Description", with: "List of projects / readings to do"
+      click_button "Create Todo List"
+
+      expect(current_path).to eq "/todo_lists"
+      expect(page).to have_text("School Work")
+      expect(TodoList.where(title: "School Work").count).to eq 1
+    end
+  end
+
 end

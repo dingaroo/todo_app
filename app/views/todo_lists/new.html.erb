@@ -1,0 +1,19 @@
+<h2>Create New Todo List</h2>
+
+<%= form_for(@todo_list) do |f| %>
+
+  <div class="field">
+    <%= f.label :title, "Title" %>
+    <%= f.text_field :title %>
+  </div>
+
+  <div class="field">
+    <%= f.label :description, "Description" %>
+    <%= f.text_area :description %>
+  </div>
+
+  <div class="action">
+    <%= f.submit "Create Todo List" %>
+  </div>
+
+<% end %>

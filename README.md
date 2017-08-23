@@ -760,3 +760,145 @@ Go back to your index page again, now you will see the title of the todo list in
 With that, we have finally completed the first user story: **As a user, I should be able to view all my todo lists.**
 
 ![Populated Todo List](docs/img/10_Populated_todo_list.png?raw=true "Populated Todo List")
+
+#### Create Todo List
+
+Now you can view all your created todo lists, but how do you create them in the first place?
+
+In this section, I will show you how to do it - specifically, the user story:
+
+**As a user, I should be able to create todo list.**
+
+As usual, let's write the behavior in rspec first.
+
+#### Todo List Validations
+
+*spec/features/todo_lists_spec.rb*
+```ruby
+require 'rails_helper'
+
+RSpec.feature "TodoLists", type: :feature do
+
+  feature "view all todo lists" do
+    # Hidden so that this code example is shorter. It will be the same as the above.
+  end
+
+  feature "create a todo list" do
+
+    it "should create one todo list" do
+      visit "/todo_lists/new"
+      expect(page).to have_http_status(:success)
+      expect(page).to have_text("Create New Todo List")
+      fill_in "title", with: "School Work"
+      fill_in "description", with: "List of projects / readings to do"
+      click_button "Create Todo List"
+
+      expect(current_path).to eq "/todo_lists"
+      expect(page).to have_text("School Work")
+      expect(TodoList.find_by(title: "School Work").where).to eq 1
+    end
+  end
+
+end
+```
+
+When you run this test, your test will fail. The first issue is routing issues, let's fix that:
+
+*config/routes.rb*
+```ruby
+Rails.application.routes.draw do
+  resources :odots
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  get "/todo_lists", to: "todo_lists#index"
+  get "/todo_lists/new", to: "todo_lists#new"
+end
+```
+
+Then, rspec complains that there is no "new" action for the controller. But before we fix that, let's do a little refactoring.
+
+You notice that the 2 routes we define: `get "/todo_lists, to: "todo_lists#index"` and `get "/todo_lists/new", to: "todo_lists#new"` are somewhat similar. If we run Rails routes, we will get something like this:
+
+```
+Prefix Verb   URI Pattern               Controller#Action
+todo_lists GET    /todo_lists(.:format)     todo_lists#index
+todo_lists_new GET    /todo_lists/new(.:format) todo_lists#new
+```
+
+Turns out that Rails has a function for such routes. These routes are known as the standard routes comprising of 7 actions: index, new, create, edit, update, destroy and show.
+
+To get these routes, we can simply use the following code:
+
+```ruby
+resources :todo_lists
+```
+
+So change your route file to use this instead of the 2 separate routes:
+
+*config/routes.rb*
+```ruby
+Rails.application.routes.draw do
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  resources :todo_lists
+end
+```
+
+Running `rails routes` again, you will get the following:
+
+```
+Prefix Verb      URI Pattern                           Controller#Action
+todo_lists       GET    /todo_lists(.:format)          todo_lists#index
+                 POST   /todo_lists(.:format)          todo_lists#create
+new_todo_list    GET    /todo_lists/new(.:format)      todo_lists#new
+edit_todo_list   GET    /todo_lists/:id/edit(.:format) todo_lists#edit
+todo_list        GET    /todo_lists/:id(.:format)      todo_lists#show
+                 PATCH  /todo_lists/:id(.:format)      todo_lists#update
+                 PUT    /todo_lists/:id(.:format)      todo_lists#update
+                 DELETE /todo_lists/:id(.:format)      todo_lists#destroy
+```
+One line of code, you get 7 routes.
+
+But you have an issue. You don't need these 7 routes for now. You only need the `index` and `new`. In this case, you can specify what you want using the following code:
+
+```ruby
+resources :todo_lists, only: [:index, :new]
+```
+
+Let's change this:
+
+*config/routes.rb*
+```ruby
+Rails.application.routes.draw do
+  resources :odots
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  resources :todo_lists, only: [:index, :new]
+end
+```
+
+When you run `rails routes` again, you should only see the below 2 routes:
+
+```
+Prefix Verb      URI Pattern                           Controller#Action
+todo_lists       GET    /todo_lists(.:format)          todo_lists#index
+new_todo_list    GET    /todo_lists/new(.:format)      todo_lists#new
+```
+
+Now run your test again to make sure that the same error message pops up.
+
+So we will define the `new` action in the controller.
+
+*app/controllers/todo_lists_controller.rb*
+```ruby
+class TodoListsController < ApplicationController
+
+  def index
+    @todo_lists = TodoList.all
+  end
+
+  def new
+    @todo_list = TodoList.new
+  end
+
+end
+```
+
+Over here, you define an instance variable `@todo_list` and call the `TodoList` model class, `new` method. Think of this
