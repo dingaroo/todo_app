@@ -1,4 +1,5 @@
 class TodoListsController < ApplicationController
+  before_action :set_todo_list, only: [:edit, :update, :destroy]
 
   def index
     @todo_lists = TodoList.all
@@ -19,11 +20,9 @@ class TodoListsController < ApplicationController
   end
 
   def edit
-    @todo_list = TodoList.find(params[:id])
   end
 
   def update
-    @todo_list = TodoList.find(params[:id])
     if @todo_list.update_attributes(todo_list_params)
       flash[:notice] = "Todo List successfully updated"
       redirect_to todo_lists_url
@@ -33,7 +32,7 @@ class TodoListsController < ApplicationController
   end
 
   def destroy
-    TodoList.find(params[:id]).delete
+    @todo_list.delete
     redirect_to todo_lists_url
   end
 
@@ -41,6 +40,10 @@ class TodoListsController < ApplicationController
 
     def todo_list_params
       params.require(:todo_list).permit(:title, :description)
+    end
+
+    def set_todo_list
+      @todo_list = TodoList.find(params[:id])
     end
 
 end

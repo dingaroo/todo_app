@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
   resources :odots
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
-  resources :todo_lists, only: [:index, :new, :create, :destroy, :edit, :update]
+  resources :todo_lists, except: [:show]
 end
