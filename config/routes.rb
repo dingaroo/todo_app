@@ -5,6 +5,10 @@ Rails.application.routes.draw do
     resources :todo_items, only: [:create]
   end
 
-  resources :todo_items, only: [:destroy]
+  resources :todo_items, only: [:destroy] do
+    member do
+      get "/done", to: "todo_items#done"
+    end
+  end
 
 end

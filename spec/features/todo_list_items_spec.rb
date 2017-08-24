@@ -36,4 +36,19 @@ RSpec.feature "TodoListItems", type: :feature do
 
   end
 
+  feature "mark item as done" do
+
+    it "should be able to mark item as done" do
+      todo_list = FactoryGirl.create(:todo_list, title: "Personal learning", description: "List of things I have to do for personal learning")
+      todo_item = FactoryGirl.create(:todo_item, content: "Study for Ruby examination", todo_list: todo_list)
+      visit todo_list_path(todo_list)
+      expect(page).to have_http_status(:success)
+      expect(page).to have_text(todo_list.title)
+      expect(page).to have_text(todo_item.content)
+      click_link "mark_as_done_#{todo_item.id}"
+      todo_item.reload
+      expect(todo_item.done).to be true
+    end
+  end
+
 end
