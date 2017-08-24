@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :todo_item do
-    content "MyString"
+    content "Study for exams"
     done false
-    todo_list nil
+    association :todo_list
   end
 end
