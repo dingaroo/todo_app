@@ -18,6 +18,11 @@ class TodoListsController < ApplicationController
     end
   end
 
+  def destroy
+    TodoList.find(params[:id]).delete
+    redirect_to todo_lists_url
+  end
+
   private
 
     def todo_list_params
