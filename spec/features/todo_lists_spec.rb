@@ -42,13 +42,15 @@ RSpec.feature "TodoLists", type: :feature do
 
     before :each do
       @todo_list_1 = FactoryGirl.create(:todo_list, title: "Personal learning", description: "List of things I have to do for personal learning")
+      @todo_list_2 = FactoryGirl.create(:todo_list, title: "Work", description: "Work list items")
     end
 
     it "should delete a todo list from index page" do
       visit "/todo_lists"
       expect(page).to have_http_status(:success)
-      expect(TodoList.where(title: "Personal learning").count).to eq 1
-      click_link "Delete TodoList"
+      todo_list = TodoList.find_by(title: "Personal learning")
+      expect(todo_list).to_not be_nil
+      click_link "delete_todo_list_#{todo_list.id}"
 
       expect(current_path).to eq "/todo_lists"
       expect(TodoList.where(title: "Personal learning").count).to eq 0
