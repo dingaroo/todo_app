@@ -16,4 +16,13 @@ RSpec.describe TodoList, type: :model do
     end
 
   end
+
+  context "default value" do
+
+    it "archive should default to false" do
+      todo_list.save
+      expect(todo_list.archive).to eq false
+    end
+  end
+
 end
