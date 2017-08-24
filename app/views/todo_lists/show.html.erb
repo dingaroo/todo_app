@@ -3,3 +3,26 @@
 <div>
   Add your first Todo list item here:
 </div>
+
+<%= form_for([@todo_list, @todo_item]) do |f| %>
+
+  <div class="field">
+    <%= f.label :content, "Content" %>
+    <%= f.text_field :content %>
+  </div>
+
+  <div class="action">
+    <%= f.submit "Add Item" %>
+  </div>
+
+<% end %>
+
+
+<!-- Todo Items -->
+<div>
+  <ul>
+    <% @todo_items.each do |todo_item| %>
+      <li><%= todo_item.content %></li>
+    <% end %>
+  </ul>
+</div>

@@ -10,9 +10,11 @@ RSpec.feature "TodoListItems", type: :feature do
       expect(page).to have_http_status(:success)
       expect(page).to have_text(todo_list.title)
       expect do
-        fill_in "content", with: "Study for Ruby examination"
+        fill_in "Content", with: "Study for Ruby examination"
         click_button "Add Item"
       end.to change{ TodoItem.count }.by(1)
+      expect(current_path).to eq todo_list_path(todo_list)
+      expect(page).to have_text("Study for Ruby examination")
     end
 
   end
