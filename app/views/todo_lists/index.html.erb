@@ -3,6 +3,7 @@
 <% @todo_lists.each do |todo_list| %>
   <p><%= todo_list.title %> |
      <%= link_to "Delete TodoList", todo_list_path(todo_list), method: :delete, id: "delete_todo_list_#{todo_list.id}" %> |
-     <%= link_to "Edit TodoList", edit_todo_list_path(todo_list), id: "edit_todo_list_#{todo_list.id}" %>
+     <%= link_to "Edit TodoList", edit_todo_list_path(todo_list), id: "edit_todo_list_#{todo_list.id}" %> |
+     <%= link_to "Open TodoList", todo_list_path(todo_list) %>
   </p>
 <% end %>
