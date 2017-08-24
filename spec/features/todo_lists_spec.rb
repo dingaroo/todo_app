@@ -57,4 +57,27 @@ RSpec.feature "TodoLists", type: :feature do
     end
   end
 
+  feature "edit a todo list" do
+
+    before :each do
+      @todo_list_1 = FactoryGirl.create(:todo_list, title: "Personal learning", description: "List of things I have to do for personal learning")
+    end
+
+    it "should edit a todo list" do
+      visit "/todo_lists"
+      todo_list = TodoList.find_by(title: "Personal learning")
+      expect(todo_list).to_not be_nil
+      click_link "edit_todo_list_#{todo_list.id}"
+
+      expect(current_path).to eq "/todo_lists/#{todo_list.id}/edit"
+      expect(page).to have_text("Edit Todo List")
+      fill_in "Title", with: "School Work"
+      click_button "Update Todo List"
+      expect(current_path).to eq "/todo_lists"
+
+      todo_list.reload
+      expect(todo_list.title).to eq "School Work"
+    end
+  end
+
 end
