@@ -2,18 +2,18 @@
 
 <%= form_for(@todo_list) do |f| %>
 
-  <div class="field">
+  <div class="form-group">
     <%= f.label :title, "Title" %>
-    <%= f.text_field :title %>
+    <%= f.text_field :title, class: "form-control" %>
   </div>
 
-  <div class="field">
+  <div class="form-group">
     <%= f.label :description, "Description" %>
-    <%= f.text_area :description %>
+    <%= f.text_area :description, class: "form-control" %>
   </div>
 
-  <div class="action">
-    <%= f.submit "Create Todo List" %>
+  <div class="form-group">
+    <%= f.submit "Create Todo List", class: "btn btn-default" %>
   </div>
 
 <% end %>
