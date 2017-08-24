@@ -10,8 +10,8 @@ class TodoItemsController < ApplicationController
   end
 
   def destroy
-    @todo_list = TodoList.find(params[:todo_list_id])
     @todo_item = TodoItem.find(params[:id])
+    @todo_list = TodoList.find(@todo_item.todo_list_id)
     @todo_item.delete
     redirect_to @todo_list
   end
