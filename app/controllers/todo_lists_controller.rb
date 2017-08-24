@@ -1,8 +1,11 @@
 class TodoListsController < ApplicationController
-  before_action :set_todo_list, only: [:edit, :update, :destroy]
+  before_action :set_todo_list, only: [:edit, :update, :destroy, :show]
 
   def index
     @todo_lists = TodoList.all
+  end
+
+  def show
   end
 
   def new
