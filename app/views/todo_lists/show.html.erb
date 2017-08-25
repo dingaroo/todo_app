@@ -1,34 +1,44 @@
 <h2><%= @todo_list.title %></h2>
 
+<p><%= @todo_list.description %></p>
+
 <div>
-  Add your first Todo list item here:
+  Add your Todo list item here:
 </div>
 
 <%= form_for([@todo_list, @todo_item]) do |f| %>
 
-  <div class="field">
-    <%= f.label :content, "Content" %>
-    <%= f.text_field :content %>
-  </div>
+  <div>
+    <div class="row">
+      <div class="col-xs-6">
+        <div class="form-group">
+          <%= f.label :content, "Content", class: "hidden" %>
+          <%= f.text_field :content, class: "form-control", placeholder: "Content" %>
+        </div>
+      </div>
+      <div class="col-xs-4">
+        <div class="form-group">
+          <%= f.submit "Add Item", class: "btn btn-primary" %>
+        </div>
+      </div>
+    </div>
 
-  <div class="action">
-    <%= f.submit "Add Item" %>
+
   </div>
 
 <% end %>
 
-
 <!-- Todo Items -->
-<div>
-  <ul>
-    <% @todo_items.each do |todo_item| %>
-      <li><%= todo_item.content %> |
-          <%= todo_item.done ? "Done" : "Not Done" %> |
-          <%= link_to "Mark as done", done_todo_item_path(todo_item), id: "mark_as_done_#{todo_item.id}" %> |
-          <%= link_to "Delete Item", todo_item_path(todo_item), method: :delete, id: "delete_todo_item_#{todo_item.id}" %>
-      </li>
-    <% end %>
-  </ul>
-</div>
 
-<%= link_to "Back to Todo Lists", todo_lists_path %>
+<ol class="list-group">
+  <% @todo_items.each do |todo_item| %>
+    <li class='list-group-item clearfix <%= "list-group-item-info" if todo_item.done %>'>
+      <h5 class="pull-right"><%= todo_item.done ? "Done" : "Pending" %></h5>
+      <h4><%= todo_item.content %></h4>
+      <%= link_to "Mark as done", done_todo_item_path(todo_item), class: "btn btn-success btn-sm", id: "mark_as_done_#{todo_item.id}" if !todo_item.done %>
+      <%= link_to "Delete Item", todo_item_path(todo_item), method: :delete, class: "btn btn-danger btn-sm", id: "delete_todo_item_#{todo_item.id}" %>
+    </li>
+  <% end %>
+</ol>
+
+<%= link_to "Back to Todo Lists", todo_lists_path, class: "btn btn-primary" %>

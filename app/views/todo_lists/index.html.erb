@@ -1,9 +1,35 @@
 <h2>Your Todo Lists</h2>
 
-<% @todo_lists.each do |todo_list| %>
-  <p><%= todo_list.title %> |
-     <%= link_to "Delete TodoList", todo_list_path(todo_list), method: :delete, id: "delete_todo_list_#{todo_list.id}" %> |
-     <%= link_to "Edit TodoList", edit_todo_list_path(todo_list), id: "edit_todo_list_#{todo_list.id}" %> |
-     <%= link_to "Open TodoList", todo_list_path(todo_list) %>
-  </p>
-<% end %>
+<div class="row">
+  <div class="col-xs-8">
+    <p>
+      You have created the below Todo Lists. Click on the title to see the todo list.
+    </p>
+  </div>
+  <div class="col-xs-4">
+    <%= link_to "Create New Todo List", new_todo_list_path, class: "btn btn-success" %>
+  </div>
+</div>
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Description</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @todo_lists.each do |todo_list| %>
+      <tr>
+        <td><%= link_to todo_list.title, todo_list_path(todo_list) %></td>
+        <td><%= todo_list.description %></td>
+        <td>
+          <%= link_to "Edit", edit_todo_list_path(todo_list), class: "btn btn-primary btn-sm", id: "edit_todo_list_#{todo_list.id}" %>
+          <%= link_to "Delete", todo_list_path(todo_list), method: :delete, class: "btn btn-danger btn-sm", id: "delete_todo_list_#{todo_list.id}" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
